@@ -26,10 +26,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.linuxtools.internal.gprof.dialog.OpenGmonDialog;
 import org.eclipse.linuxtools.internal.gprof.utils.STAddr2Assembly;
 import org.eclipse.linuxtools.internal.gprof.view.GmonView;
+import org.eclipse.linuxtools.lstviewer.LstObject;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.PlatformUI;
-import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
 
 
 

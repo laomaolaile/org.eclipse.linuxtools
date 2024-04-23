@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.linuxtools.internal.gprof.Messages;
 import org.eclipse.linuxtools.internal.gprof.symbolManager.Bucket;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistRoot;
-import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
+import org.eclipse.linuxtools.lstviewer.Lst;
 
 
 /**

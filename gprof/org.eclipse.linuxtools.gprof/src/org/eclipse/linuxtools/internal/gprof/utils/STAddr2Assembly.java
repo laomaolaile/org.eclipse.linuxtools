@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.linuxtools.binutils.utils.STSymbolManager;
 import org.eclipse.linuxtools.internal.gprof.Activator;
+import org.eclipse.linuxtools.lstviewer.CustomTextView;
+import org.eclipse.linuxtools.lstviewer.LstObject;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.riscvstudio.ide.tools.riscv.texteditor.CustomTextView;
-import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
 
 
 /**

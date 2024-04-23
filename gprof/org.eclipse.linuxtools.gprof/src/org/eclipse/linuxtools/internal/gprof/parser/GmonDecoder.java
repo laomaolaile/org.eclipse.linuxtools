@@ -32,7 +32,7 @@ import org.eclipse.linuxtools.binutils.utils.STSymbolManager;
 import org.eclipse.linuxtools.internal.gprof.Messages;
 import org.eclipse.linuxtools.internal.gprof.utils.LEDataInputStream;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistRoot;
-import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
+import org.eclipse.linuxtools.lstviewer.LstObject;
 
 /**
  * Parser of gmon file

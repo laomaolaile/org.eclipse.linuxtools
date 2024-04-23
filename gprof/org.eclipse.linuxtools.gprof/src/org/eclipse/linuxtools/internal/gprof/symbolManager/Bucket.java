@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.linuxtools.internal.gprof.symbolManager;
 
-import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
+import org.eclipse.linuxtools.lstviewer.Lst;
 
 /**
  * Bucket structure.

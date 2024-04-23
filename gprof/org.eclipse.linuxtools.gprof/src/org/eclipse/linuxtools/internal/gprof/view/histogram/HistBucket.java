@@ -15,7 +15,7 @@ package org.eclipse.linuxtools.internal.gprof.view.histogram;
 import java.util.LinkedList;
 
 import org.eclipse.linuxtools.internal.gprof.symbolManager.Bucket;
-import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
+import org.eclipse.linuxtools.lstviewer.Lst;
 
 
 /**

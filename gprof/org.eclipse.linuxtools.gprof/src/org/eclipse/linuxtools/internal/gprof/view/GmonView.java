@@ -45,6 +45,7 @@ import org.eclipse.linuxtools.internal.gprof.utils.PPC64ElfBinaryObjectWrapper;
 import org.eclipse.linuxtools.internal.gprof.view.fields.SampleProfField;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.CGArc;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.CGCategory;
+import org.eclipse.linuxtools.lstviewer.LstObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -55,7 +56,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
 
 /**
  * The view where gmon file is displayed
