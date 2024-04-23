@@ -13,9 +13,18 @@
 package org.eclipse.linuxtools.internal.gprof.dialog;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -58,14 +67,23 @@ public class OpenGmonDialog extends Dialog {
     private Text binText;
     private String binValue;
 
+	/* Inputs */
+	private Text lstText;
+	private String lstValue;
+
+	private boolean lstValid;
+
     /* error label */
-    private Label errorLabel;
+	private Text errorLabel;
+	private Text errorLabel2;
 
     /* validation boolean */
     private boolean binaryValid;
 
-    private final String defaultValue;
+	private final String defaultBinValue;
+	private final String defaultLstValue;
     private final IPath gmonFile;
+
 
     /**
      * Constructor
@@ -78,7 +96,8 @@ public class OpenGmonDialog extends Dialog {
         super(parentShell);
         this.gmonFile = gmonFile;
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        this.defaultValue = binPath;
+		this.defaultBinValue = binPath;
+		this.defaultLstValue = getDefaultLst(gmonFile);
     }
 
     /**
@@ -90,61 +109,117 @@ public class OpenGmonDialog extends Dialog {
         return binValue;
     }
 
+	/**
+	 * Gets the Lst file selected by the user
+	 *
+	 * @return a path to a binary file
+	 */
+	public String getLstFile() {
+		return lstValue;
+	}
+
     @Override
     protected Control createContents(Composite parent) {
         Control composite = super.createContents(parent);
         validateBinary();
+
+		validateLst();
+
         return composite;
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
+
         this.getShell().setText(Messages.OpenGmonDialog_GMON_BINARY_FILE);
-        Composite composite = (Composite) super.createDialogArea(parent);
 
-        /* first line */
-        Group c = new Group(composite, SWT.NONE);
-        c.setText(Messages.OpenGmonDialog_BINARY_FILE);
-        c.setToolTipText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE_FULL_MSG);
-        GridLayout layout = new GridLayout(2, false);
-        c.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        c.setLayoutData(data);
+		Composite composite = (Composite) super.createDialogArea(parent);
+		{
 
-        Label binLabel = new Label(c, SWT.NONE);
-        binLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE_FULL_MSG);
-        data = new GridData();
-        data.horizontalSpan = 2;
-        binLabel.setLayoutData(data);
+			/* first line */
+			Group c = new Group(composite, SWT.NONE);
+			c.setText(Messages.OpenGmonDialog_BINARY_FILE);
+			c.setToolTipText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE_FULL_MSG);
+			GridLayout layout = new GridLayout(2, false);
+			c.setLayout(layout);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			c.setLayoutData(data);
 
-        binText = new Text(c, SWT.BORDER);
-        binText.setText(this.defaultValue);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-        binText.setLayoutData(data);
-        binText.addModifyListener(new BinaryModifyListener());
+			Label binLabel = new Label(c, SWT.NONE);
+			binLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE_FULL_MSG);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			binLabel.setLayoutData(data);
 
-        Composite cbBin = new Composite(c, SWT.NONE);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-        cbBin.setLayoutData(data);
-        cbBin.setLayout(new GridLayout(2, true));
-        Button binBrowseWorkspaceButton = new Button(cbBin, SWT.PUSH);
-        binBrowseWorkspaceButton.setText(Messages.OpenGmonDialog_WORKSPACE);
-		binBrowseWorkspaceButton.addSelectionListener(SelectionListener
-				.widgetSelectedAdapter(e -> handleBrowseWorkspace(Messages.OpenGmonDialog_OPEN_BINARY_FILE, binText)));
-        Button binBrowseFileSystemButton = new Button(cbBin, SWT.PUSH);
-        binBrowseFileSystemButton.setText(Messages.OpenGmonDialog_FILE_SYSTEM);
-		binBrowseFileSystemButton.addSelectionListener(SelectionListener
-				.widgetSelectedAdapter(e -> handleBrowse(Messages.OpenGmonDialog_OPEN_BINARY_FILE, binText)));
+			binText = new Text(c, SWT.BORDER);
+			binText.setText(this.defaultBinValue);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = 300;
+			binText.setLayoutData(data);
+			binText.addModifyListener(new BinaryModifyListener());
 
-        /* 2sd line */
-        errorLabel = new Label(composite, SWT.NONE);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 3;
-        errorLabel.setLayoutData(data);
-        errorLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+			Composite cbBin = new Composite(c, SWT.NONE);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			cbBin.setLayoutData(data);
+			cbBin.setLayout(new GridLayout(2, true));
+			Button binBrowseWorkspaceButton = new Button(cbBin, SWT.PUSH);
+			binBrowseWorkspaceButton.setText(Messages.OpenGmonDialog_WORKSPACE);
+			binBrowseWorkspaceButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(
+					e -> handleBrowseWorkspace(Messages.OpenGmonDialog_OPEN_BINARY_FILE, binText)));
+			Button binBrowseFileSystemButton = new Button(cbBin, SWT.PUSH);
+			binBrowseFileSystemButton.setText(Messages.OpenGmonDialog_FILE_SYSTEM);
+			binBrowseFileSystemButton.addSelectionListener(SelectionListener
+					.widgetSelectedAdapter(e -> handleBrowse(Messages.OpenGmonDialog_OPEN_BINARY_FILE, binText)));
 
-        c.layout();
+			c.layout();
+
+
+			Label lstLabel = new Label(c, SWT.NONE);
+			lstLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_LST_FILE_FULL_MSG);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			lstLabel.setLayoutData(data);
+
+			lstText = new Text(c, SWT.BORDER);
+			lstText.setText(this.defaultLstValue);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+			lstText.setLayoutData(data);
+			lstText.addModifyListener(new LstModifyListener());
+
+			Composite cbBin2 = new Composite(c, SWT.NONE);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			cbBin2.setLayoutData(data);
+			cbBin2.setLayout(new GridLayout(2, true));
+			Button binBrowseWorkspaceButton2 = new Button(cbBin2, SWT.PUSH);
+			binBrowseWorkspaceButton2.setText(Messages.OpenGmonDialog_WORKSPACE);
+			binBrowseWorkspaceButton2.addSelectionListener(SelectionListener.widgetSelectedAdapter(
+					e -> handleBrowseWorkspace(Messages.OpenGmonDialog_OPEN_BINARY_FILE, lstText)));
+			Button binBrowseFileSystemButton2 = new Button(cbBin2, SWT.PUSH);
+			binBrowseFileSystemButton2.setText(Messages.OpenGmonDialog_FILE_SYSTEM);
+			binBrowseFileSystemButton2.addSelectionListener(SelectionListener
+					.widgetSelectedAdapter(e -> handleBrowse(Messages.OpenGmonDialog_OPEN_BINARY_FILE, lstText)));
+
+			c.layout();
+		}
+		{
+			/* 2sd line */
+			GridData data = new GridData(GridData.FILL_BOTH);
+			errorLabel = new Text(composite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			errorLabel.setLayoutData(data);
+			errorLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+
+			errorLabel2 = new Text(composite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			errorLabel2.setLayoutData(data);
+			errorLabel2.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+
+		}
+
+		composite.layout();
 
         return composite;
     }
@@ -163,13 +238,16 @@ public class OpenGmonDialog extends Dialog {
             binaryValid = true;
             getButton(IDialogConstants.OK_ID).setEnabled(binaryValid);
             errorLabel.setText(""); //$NON-NLS-1$
+			errorLabel2.setText(""); //$NON-NLS-1$
         } else {
             binaryValid = false;
             getButton(IDialogConstants.OK_ID).setEnabled(false);
             if (!binValue.equals("")) { //$NON-NLS-1$
                 errorLabel.setText("\"" + binText.getText() + "\" " + Messages.OpenGmonDialog_DOES_NOT_EXIST); //$NON-NLS-1$ //$NON-NLS-2$
+				errorLabel2.setText(""); //$NON-NLS-1$
             } else {
-                errorLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE);
+				errorLabel2.setText(""); //$NON-NLS-1$
+				errorLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_BINARY_FILE);
             }
             return;
         }
@@ -182,6 +260,43 @@ public class OpenGmonDialog extends Dialog {
         }
 
     }
+
+	private void validateLst() {
+		lstValue = lstText.getText();
+		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			lstValue = mgr.performStringSubstitution(lstValue, false);
+		} catch (CoreException e) {
+			// do nothing: never occurs
+		}
+
+		File f = new File(lstValue);
+		if (f.exists()) {
+			lstValid = true;
+			getButton(IDialogConstants.OK_ID).setEnabled(lstValid);
+			errorLabel.setText(""); //$NON-NLS-1$
+			errorLabel2.setText(""); //$NON-NLS-1$
+		} else {
+			lstValid = false;
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			if (!lstValue.equals("")) { //$NON-NLS-1$
+				errorLabel.setText("\"" + lstText.getText() + "\" " + Messages.OpenGmonDialog_DOES_NOT_EXIST); //$NON-NLS-1$ //$NON-NLS-2$
+				errorLabel2.setText(""); //$NON-NLS-1$
+			} else {
+				errorLabel.setText(Messages.OpenGmonDialog_PLEASE_ENTER_LST_FILE1);
+				errorLabel2.setText(Messages.OpenGmonDialog_PLEASE_ENTER_LST_FILE2);
+			}
+			return;
+		}
+	}
+
+	private class LstModifyListener implements ModifyListener {
+		@Override
+		public void modifyText(ModifyEvent e) {
+			validateLst();
+		}
+
+	}
 
     private void handleBrowseWorkspace(String msg, Text text) {
         ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
@@ -231,4 +346,79 @@ public class OpenGmonDialog extends Dialog {
             text.setText(s);
         }
     }
+
+	private String getDefaultLst(IPath file) {
+		IProject project = null;
+		IFile c = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(file);
+		if (c != null) {
+			project = c.getProject();
+			if (project != null && project.exists()) {
+				ICProject cproject = CoreModel.getDefault().create(project);
+				if (cproject != null) {
+					try {
+
+						URI baseurl = cproject.getLocationURI();
+
+						if (baseurl != null) {
+							List<String> lstFileList = getFileByPattern(baseurl.getPath().toString(), "*.lst"); //$NON-NLS-1$
+							if (lstFileList.size() == 1) {
+								return lstFileList.get(0);
+							} else {
+								return ""; //$NON-NLS-1$
+							}
+						}
+
+					} catch (ProcessFailureException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	private static List<String> getFileByPattern(String folderSourcePath, String pattern)
+			throws ProcessFailureException {
+
+		pattern = pattern.startsWith("*") ? pattern.replace("*", "(.*)") : pattern; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		@SuppressWarnings("unused")
+		List<String> result = new ArrayList<String>();
+
+		File dir = new File(folderSourcePath);
+		try {
+			if (!dir.isAbsolute()) {
+
+				URL folderURL;
+				folderURL = new File(folderSourcePath).toURI().toURL();
+
+				if (folderURL == null) {
+					throw new ProcessFailureException("ConditionalCopyFolders: folderURL is null"); //$NON-NLS-1$
+				}
+
+				// System.out.println(folderURL.getFile());
+				dir = new File(folderURL.getFile());
+			}
+		} catch (IOException e) {
+			// Activator.log(e);
+		}
+
+		if (dir.isDirectory()) {
+			for (File child : dir.listFiles()) {
+				String fileName = child.getName();
+				if (child.isDirectory()) {
+					result.addAll(getFileByPattern(folderSourcePath + File.separator + fileName, pattern));
+				} else {
+					// 处理通配符
+					if (pattern.length() > 0) {
+						if (fileName.toLowerCase().matches(pattern.toLowerCase())) {
+							result.add(child.getPath());
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
 }

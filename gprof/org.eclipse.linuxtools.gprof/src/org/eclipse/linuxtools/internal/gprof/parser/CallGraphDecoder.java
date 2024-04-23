@@ -14,6 +14,7 @@ package org.eclipse.linuxtools.internal.gprof.parser;
 
 import java.io.DataInput;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,14 +59,35 @@ public class CallGraphDecoder {
         IBinaryObject program = decoder.getProgram();
         IAddressFactory addressFactory = program.getAddressFactory();
         IAddress parentAddress = addressFactory.createAddress(Long.toString(from_pc));
-        ISymbol  parentSymbol  = program.getSymbol(parentAddress);
+		ISymbol parentSymbol = getSymbol(program, parentAddress);
         IAddress childAddress  = addressFactory.createAddress(Long.toString(self_pc));
-        ISymbol  childSymbol   = program.getSymbol(childAddress);
+		ISymbol childSymbol = getSymbol(program, childAddress);
         if (childSymbol == null || parentSymbol == null) {
             return;
         }
         addCallArc(parentSymbol, parentAddress, childSymbol, count);
     }
+
+	public ISymbol getSymbol(IBinaryObject program, IAddress addr) {
+		ISymbol[] syms = program.getSymbols();
+		int insertion = Arrays.binarySearch(syms, addr);
+		if (insertion >= 0) {
+			return syms[insertion];
+		}
+		if (insertion == -1) {
+			return null;
+		}
+		insertion = -insertion - 1;
+		ISymbol symbol = syms[insertion - 1];
+		if (symbol.getSize() <= 0) {
+			return syms[insertion - 1];
+		} else {
+			if (addr.compareTo(symbol.getAddress().add(symbol.getSize())) < 0) {
+				return syms[insertion - 1];
+			}
+		}
+		return null;
+	}
 
 
     protected long readAddress(DataInput stream) throws IOException {

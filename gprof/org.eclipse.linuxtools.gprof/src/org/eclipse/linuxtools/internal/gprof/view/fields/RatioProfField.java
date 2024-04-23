@@ -25,6 +25,7 @@ import org.eclipse.linuxtools.internal.gprof.view.histogram.TreeElement;
 /**
  * Column "sample ratio" of the displayed element
  */
+@SuppressWarnings("deprecation")
 public class RatioProfField extends AbstractPercentageDrawerField implements IChartField{
 
     /** Format to use to display percentages */

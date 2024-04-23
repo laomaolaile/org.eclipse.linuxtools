@@ -19,6 +19,10 @@ public class Messages extends NLS {
     public static String GmonDecoder_BAD_TAG_ERROR;
     public static String HistogramDecoder_INCOMPATIBLE_HIST_HEADER_ERROR_MSG;
     public static String HistRoot_Summary;
+	public static String OpenGmonDialog_LST_FILE;
+	public static String OpenGmonDialog_PLEASE_ENTER_LST_FILE_FULL_MSG;
+	public static String OpenGmonDialog_PLEASE_ENTER_LST_FILE1;
+	public static String OpenGmonDialog_PLEASE_ENTER_LST_FILE2;
     public static String OpenGmonDialog_BINARY_FILE;
     public static String OpenGmonDialog_DOES_NOT_EXIST;
     public static String OpenGmonDialog_FILE_SYSTEM;

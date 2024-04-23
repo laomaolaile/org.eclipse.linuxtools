@@ -13,6 +13,8 @@
 package org.eclipse.linuxtools.internal.gprof.view;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -22,6 +24,8 @@ import org.eclipse.linuxtools.binutils.link2source.STLink2SourceSupport;
 import org.eclipse.linuxtools.dataviewers.abstractviewers.AbstractSTTreeViewer;
 import org.eclipse.linuxtools.dataviewers.abstractviewers.ISTDataViewersField;
 import org.eclipse.linuxtools.internal.gprof.Activator;
+import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
+import org.eclipse.linuxtools.internal.gprof.utils.STAddr2Assembly;
 import org.eclipse.linuxtools.internal.gprof.view.fields.CallsProfField;
 import org.eclipse.linuxtools.internal.gprof.view.fields.NameProfField;
 import org.eclipse.linuxtools.internal.gprof.view.fields.RatioProfField;
@@ -81,9 +85,24 @@ public class GmonViewer extends AbstractSTTreeViewer {
 
     @Override
     protected void handleOpenEvent(OpenEvent event) {
+
         IStructuredSelection selection = (IStructuredSelection) event.getSelection();
         TreeElement element = (TreeElement) selection.getFirstElement();
         if (element != null){
+			String addr = element.getAddr();
+			if (addr != null) {
+				Object source = event.getSource();
+				if (source instanceof TreeViewer) {
+					TreeViewer tv = (TreeViewer) source;
+					Object tvinput = tv.getInput();
+					if (tvinput instanceof GmonDecoder) {
+						GmonDecoder gmondecoder = (GmonDecoder) tvinput;
+						IPath p = new Path(gmondecoder.getLstObject().getLstpath());
+						STAddr2Assembly.openSourceFileAtLocation(gmondecoder.getProject(), p, addr);
+					}
+				}
+
+			}
             String s = element.getSourcePath();
             if (s == null || "??".equals(s)) { //$NON-NLS-1$
                 return; // nothing to do here.
@@ -92,6 +111,8 @@ public class GmonViewer extends AbstractSTTreeViewer {
                 IBinaryObject exec = ((HistRoot)element.getRoot()).decoder.getProgram();
                 STLink2SourceSupport.openSourceFileAtLocation(exec, s, lineNumber);
             }
+
+
         }
     }
 

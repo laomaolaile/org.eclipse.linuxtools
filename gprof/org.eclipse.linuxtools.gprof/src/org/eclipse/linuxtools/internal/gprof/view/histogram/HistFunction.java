@@ -36,6 +36,7 @@ public class HistFunction extends AbstractTreeElement {
     private final LinkedList<HistLine> children = new LinkedList<>();
     private CGCategory parentsFunctions;
     private CGCategory childrenFunctions;
+	public Bucket bucket;
 
     private static HashMap<ISymbol, Integer> histSym = new HashMap<>();
 
@@ -75,6 +76,8 @@ public class HistFunction extends AbstractTreeElement {
         HistLine hf = getChild(lineNumber);
         hf.addBucket(b);
         histSym.put(symbol, b.time + histSym.get(symbol));
+
+		this.bucket = this.bucket == null ? b : this.bucket;
     }
 
     void addCallGraphNode(CallGraphNode node) {
@@ -138,6 +141,11 @@ public class HistFunction extends AbstractTreeElement {
             return 0;
         }
     }
+
+	@Override
+	public String getAddr() {
+		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+	}
 
     private IProject getProject() {
         return ((HistRoot)getParent().getParent()).getProject();

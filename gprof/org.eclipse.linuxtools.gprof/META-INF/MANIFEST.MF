@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
  org.eclipse.linuxtools.dataviewers,
  org.eclipse.linuxtools.binutils,
- org.eclipse.linuxtools.dataviewers.charts
+ org.eclipse.linuxtools.dataviewers.charts,
+ org.riscvstudio.ide.tools.riscv.texteditor
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin

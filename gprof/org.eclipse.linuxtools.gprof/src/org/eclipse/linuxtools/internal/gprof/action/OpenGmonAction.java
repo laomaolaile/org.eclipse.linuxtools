@@ -21,12 +21,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.window.Window;
 import org.eclipse.linuxtools.internal.gprof.dialog.OpenGmonDialog;
+import org.eclipse.linuxtools.internal.gprof.utils.STAddr2Assembly;
 import org.eclipse.linuxtools.internal.gprof.view.GmonView;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.PlatformUI;
+import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
+
+
 
 /**
  * Action performed when user clicks on a gmon file
@@ -44,12 +49,24 @@ public class OpenGmonAction implements IEditorLauncher {
             return;
         }
         String binaryPath = d.getBinaryFile();
+		String lstPath = d.getLstFile();
         IProject project = null;
         IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(file);
         if (f != null) {
             project = f.getProject();
         }
-        GmonView.displayGprofView(binaryPath, file.toOSString(), project);
+
+		LstObject lstobject = null;
+
+		if (lstPath != null && project != null) {
+			Path lstfile = new Path(lstPath);
+			lstobject = STAddr2Assembly.openSourceFileAtLocation(project, lstfile, null);
+
+		}
+
+		if (lstobject != null && lstobject.getLstpath() != null) {
+			GmonView.displayGprofView(binaryPath, lstobject, file.toOSString(), project);
+		}
     }
 
     private String getDefaultBinary(IPath file) {
@@ -67,7 +84,8 @@ public class OpenGmonAction implements IEditorLauncher {
                             IResource r = b[0].getResource();
                             return r.getLocation().toOSString();
                         }
-                    } catch (CModelException e) {
+					} catch (CModelException e) {
+						System.out.println(e);
                     }
                 }
             }

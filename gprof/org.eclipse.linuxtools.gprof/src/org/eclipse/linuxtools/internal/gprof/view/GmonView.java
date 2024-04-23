@@ -55,12 +55,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
 
 /**
  * The view where gmon file is displayed
  *
  * @author Xavier Raynaud <xavier.raynaud@st.com>
  */
+@SuppressWarnings("deprecation")
 public class GmonView extends AbstractSTDataView {
 
     public static final String ID = "org.eclipse.linuxtools.gprof.view"; //$NON-NLS-1$
@@ -201,6 +203,8 @@ public class GmonView extends AbstractSTDataView {
         String title = " gmon file: " //$NON-NLS-1$
                 + decoder.getGmonFile() + "\n program file: " //$NON-NLS-1$
                 + decoder.getProgram().getPath() + "\n" //$NON-NLS-1$
+				+ " program listing file: " //$NON-NLS-1$
+				+ decoder.getLstObject().getLstpath() + "\n" //$NON-NLS-1$
                 + " timestamp: " + decoder.getGmonFileTimeStamp(); //$NON-NLS-1$
         HistogramDecoder histo = decoder.getHistogramDecoder();
         if (histo.hasValues()) {
@@ -228,6 +232,33 @@ public class GmonView extends AbstractSTDataView {
         titleLabel.getParent().layout(true);
     }
 
+	/**
+	 * Display gmon results in the GProf View. NOTE: this method has to be called
+	 * from within the UI thread.
+	 *
+	 * @param binaryPath
+	 * @param gmonPath
+	 * @param instanceName
+	 */
+	public static GmonView displayGprofView(String binaryPath, String gmonPath, IProject project) {
+		IBinaryObject binary = STSymbolManager.sharedInstance.getBinaryObject(new Path(binaryPath));
+		if (binary == null) {
+			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Invalid binary file", //$NON-NLS-1$
+					binaryPath + " is not a valid binary file."); //$NON-NLS-1$
+			return null;
+		} else if (binary.getCPU().equals("ppc64") && !binary.isLittleEndian()) { //$NON-NLS-1$
+			binary = new PPC64ElfBinaryObjectWrapper(binary.getBinaryParser(), binary.getPath(), binary.getType());
+		}
+		GmonDecoder decoder = new GmonDecoder(binary, project);
+		try {
+			decoder.read(gmonPath);
+		} catch (IOException e) {
+			IStatus status = Status.error(e.getMessage(), e);
+			Activator.getDefault().getLog().log(status);
+		}
+		return displayGprofView(decoder, gmonPath);
+	}
+
     /**
      * Display gmon results in the GProf View. NOTE: this method has to be called from within the UI thread.
      *
@@ -235,7 +266,7 @@ public class GmonView extends AbstractSTDataView {
      * @param gmonPath
      * @param instanceName
      */
-    public static GmonView displayGprofView(String binaryPath, String gmonPath, IProject project) {
+	public static GmonView displayGprofView(String binaryPath, LstObject lstObject, String gmonPath, IProject project) {
         IBinaryObject binary = STSymbolManager.sharedInstance.getBinaryObject(new Path(binaryPath));
         if (binary == null) {
             MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Invalid binary file", //$NON-NLS-1$
@@ -244,8 +275,8 @@ public class GmonView extends AbstractSTDataView {
         } else if (binary.getCPU().equals("ppc64") && !binary.isLittleEndian()) { //$NON-NLS-1$
             binary = new PPC64ElfBinaryObjectWrapper(binary.getBinaryParser(), binary.getPath(), binary.getType());
         }
-
         GmonDecoder decoder = new GmonDecoder(binary, project);
+		decoder.setLstObject(lstObject);
         try {
             decoder.read(gmonPath);
         } catch (IOException e) {

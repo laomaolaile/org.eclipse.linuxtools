@@ -34,6 +34,8 @@ public class HistRoot extends AbstractTreeElement {
     /** The decoded gmon to display */
     public final GmonDecoder decoder;
 
+	public Bucket bucket;
+
     /**
      * Constructor
      * @param decoder
@@ -68,6 +70,7 @@ public class HistRoot extends AbstractTreeElement {
         String path = decoder.getFileName(s);
         HistFile hf = getChild(path);
         hf.addBucket(b, s, program);
+		this.bucket = this.bucket == null ? b : this.bucket;
     }
 
     /**
@@ -90,6 +93,11 @@ public class HistRoot extends AbstractTreeElement {
     public String getName() {
         return Messages.HistRoot_Summary;
     }
+
+	@Override
+	public String getAddr() {
+		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+	}
 
     @Override
     public int getCalls() {

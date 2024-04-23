@@ -56,6 +56,7 @@ public interface TreeElement {
 
     TreeElement getRoot();
 
+	String getAddr();
 
 
 }

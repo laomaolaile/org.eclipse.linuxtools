@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.linuxtools.internal.gprof.symbolManager;
 
+import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
 
 /**
  * Bucket structure.
@@ -27,16 +28,19 @@ public class Bucket {
     /** time spent in this bucket */
     public final int  time;
 
+	public final Lst lst;
+
     /**
      * Constructor
      * @param startAddr
      * @param endAddr
      * @param time
      */
-    public Bucket(long startAddr, long endAddr, int time) {
+	public Bucket(long startAddr, long endAddr, int time, Lst lst) {
         this.startAddr = startAddr;
         this.endAddr   = endAddr;
         this.time       = time;
+		this.lst = lst;
     }
 
 }

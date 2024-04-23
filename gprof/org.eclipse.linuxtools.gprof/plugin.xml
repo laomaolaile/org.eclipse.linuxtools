@@ -5,7 +5,8 @@
          point="org.eclipse.ui.editors">
       <editor
             default="true"
-            filenames="gmon.out, gmon.sum"
+            extensions="bundle"
+            filenames="gmon.out, gmon.sum, *.out"
             icon="icons/toggle.gif"
             id="org.eclipse.linuxtools.gprof.editor.single"
             launcher="org.eclipse.linuxtools.internal.gprof.action.OpenGmonAction"

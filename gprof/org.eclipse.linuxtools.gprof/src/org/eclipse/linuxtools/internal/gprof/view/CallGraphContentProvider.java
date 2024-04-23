@@ -15,7 +15,6 @@ package org.eclipse.linuxtools.internal.gprof.view;
 import java.util.LinkedList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.CGCategory;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistFunction;
@@ -115,14 +114,6 @@ public class CallGraphContentProvider implements ITreeContentProvider {
             return new Object[] { root };
         }
         return new Object[0];
-    }
-
-    @Override
-    public void dispose() {
-    }
-
-    @Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
 }

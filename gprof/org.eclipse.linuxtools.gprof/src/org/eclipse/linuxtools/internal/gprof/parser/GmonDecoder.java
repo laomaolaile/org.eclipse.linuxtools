@@ -32,6 +32,7 @@ import org.eclipse.linuxtools.binutils.utils.STSymbolManager;
 import org.eclipse.linuxtools.internal.gprof.Messages;
 import org.eclipse.linuxtools.internal.gprof.utils.LEDataInputStream;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistRoot;
+import org.riscvstudio.ide.tools.riscv.texteditor.LstObject;
 
 /**
  * Parser of gmon file
@@ -58,6 +59,7 @@ public class GmonDecoder {
     private final PrintStream ps;
     private final HistRoot rootNode = new HistRoot(this);
     private String file;
+	private LstObject lstObject;
     private int tag = -1;
 
     private final HashMap<ISymbol, String> filenames = new HashMap<>();
@@ -255,6 +257,21 @@ public class GmonDecoder {
     public HistRoot getRootNode() {
         return rootNode;
     }
+
+	/**
+	 * @return the (last) parsed gmon file
+	 */
+	public void setLstObject(LstObject lstObject) {
+		this.lstObject = lstObject;
+	}
+
+	/**
+	 * @return
+	 * @return the (last) parsed gmon file
+	 */
+	public LstObject getLstObject() {
+		return lstObject;
+	}
 
     /**
      * @return the (last) parsed gmon file

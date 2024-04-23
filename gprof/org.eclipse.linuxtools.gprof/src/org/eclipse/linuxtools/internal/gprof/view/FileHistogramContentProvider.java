@@ -15,7 +15,6 @@ package org.eclipse.linuxtools.internal.gprof.view;
 import java.util.LinkedList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.AbstractTreeElement;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistRoot;
@@ -71,14 +70,6 @@ public class FileHistogramContentProvider implements ITreeContentProvider {
         }
         return new Object[0];
 
-    }
-
-    @Override
-    public void dispose() {
-    }
-
-    @Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
 }

@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Color;
  *
  * @author Xavier Raynaud <xavier.raynaud@st.com>
  */
+@SuppressWarnings("deprecation")
 public class SampleProfField extends AbstractSTDataViewersField implements IChartField{
 
     private boolean samples = true;

@@ -26,6 +26,7 @@ public class HistLine extends AbstractTreeElement {
 
     public final int line;
     private final LinkedList<HistBucket> children = new LinkedList<>();
+	public Bucket bucket;
 
     /**
      * Constructor
@@ -39,6 +40,7 @@ public class HistLine extends AbstractTreeElement {
 
     void addBucket(Bucket b) {
         this.children.add(new HistBucket(this,b));
+		this.bucket = this.bucket == null ? b : this.bucket;
     }
 
     @Override
@@ -56,6 +58,11 @@ public class HistLine extends AbstractTreeElement {
         String functionName = getParent().getName();
         return functionName + " (" + getParent().getParent().getName() + ":" + this.line + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
+
+	@Override
+	public String getAddr() {
+		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+	}
 
     @Override
     public int getSamples() {

@@ -15,6 +15,7 @@ package org.eclipse.linuxtools.internal.gprof.view.histogram;
 import java.util.LinkedList;
 
 import org.eclipse.linuxtools.internal.gprof.symbolManager.Bucket;
+import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
 
 
 /**
@@ -24,7 +25,7 @@ import org.eclipse.linuxtools.internal.gprof.symbolManager.Bucket;
  */
 public class HistBucket extends AbstractTreeElement {
 
-    public final Bucket bucket;
+	public Bucket bucket = null;
 
     /**
      * Constructor
@@ -33,7 +34,7 @@ public class HistBucket extends AbstractTreeElement {
      */
     public HistBucket(HistLine parent, Bucket b) {
         super(parent);
-        this.bucket = b;
+		this.bucket = b;
     }
 
     @Override
@@ -51,9 +52,19 @@ public class HistBucket extends AbstractTreeElement {
         return -1;
     }
 
+	@Override
+	public String getAddr() {
+		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+	}
+
     @Override
     public String getName() {
-        return "0x" + Long.toHexString(bucket.startAddr); //$NON-NLS-1$
+		Lst lst = bucket.lst;
+		if (lst != null) {
+			return "0x" + Long.toHexString(bucket.startAddr) + "        " + lst.getInstraction(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		return "0x" + Long.toHexString(bucket.startAddr); //$NON-NLS-1$
     }
 
     @Override

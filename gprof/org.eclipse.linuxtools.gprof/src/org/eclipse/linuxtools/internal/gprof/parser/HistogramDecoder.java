@@ -15,11 +15,13 @@ package org.eclipse.linuxtools.internal.gprof.parser;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.linuxtools.internal.gprof.Messages;
 import org.eclipse.linuxtools.internal.gprof.symbolManager.Bucket;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.HistRoot;
+import org.riscvstudio.ide.tools.riscv.texteditor.Lst;
 
 
 /**
@@ -237,6 +239,7 @@ public class HistogramDecoder {
     public void assignSamplesSymbol() {
         if (hist_sample == null || hist_sample.length == 0) return;
         ISymbol[] symblist = this.decoder.getProgram().getSymbols();
+		Map<Long, Lst> lstmap = this.decoder.getLstObject().getLstMap();
         /* read samples and assign to namelist symbols */
         int j = 1;
         for (int i = 0; i < hist_sample.length; i++)
@@ -267,7 +270,8 @@ public class HistogramDecoder {
                         if(overlap > 0)    {
                             ISymbol symbol = symblist[j];
                             int time = (int) ((overlap * ccnt) / bucketSize);
-                            Bucket   bck = new Bucket(start_addr, end_addr, time);
+                            Lst lst = lstmap.get(start_addr);
+							Bucket bck = new Bucket(start_addr, end_addr, time, lst);
                             addBucket(bck,symbol);
                         }
                     }

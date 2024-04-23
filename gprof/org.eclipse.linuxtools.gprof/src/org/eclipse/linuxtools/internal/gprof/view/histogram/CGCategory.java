@@ -56,4 +56,10 @@ public class CGCategory extends AbstractTreeElement {
     public String getName() {
         return category;
     }
+
+	@Override
+	public String getAddr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -68,6 +68,7 @@ public class PPC64ElfBinaryObjectWrapper extends ElfBinaryObject {
                 dataSection = elf.getSectionByName(".data"); //$NON-NLS-1$
             }
         } catch  (IOException e) {
+			System.out.println(e);
         }
 
         //Failed to load data Section

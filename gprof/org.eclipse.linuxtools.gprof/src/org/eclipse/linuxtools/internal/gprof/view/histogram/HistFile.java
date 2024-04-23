@@ -30,6 +30,7 @@ public class HistFile extends AbstractTreeElement {
 
     /** The source path to display */
     public final String sourcePath;
+	public Bucket bucket;
     private final LinkedList<HistFunction> children = new LinkedList<>();
 
     /**
@@ -40,6 +41,7 @@ public class HistFile extends AbstractTreeElement {
     public HistFile(HistRoot parent, String path) {
         super(parent);
         this.sourcePath = path;
+		this.bucket = null;
     }
 
     /**
@@ -62,6 +64,7 @@ public class HistFile extends AbstractTreeElement {
     void addBucket(Bucket b, ISymbol s, IBinaryObject program) {
         HistFunction hf = getChild(s);
         hf.addBucket(b, program);
+		this.bucket = this.bucket == null ? b : this.bucket;
     }
 
     void addCallGraphNode(CallGraphNode node) {
@@ -90,6 +93,11 @@ public class HistFile extends AbstractTreeElement {
     public String getSourcePath() {
         return this.sourcePath;
     }
+
+	@Override
+	public String getAddr() {
+		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+	}
 
     @Override
     public int getCalls() {

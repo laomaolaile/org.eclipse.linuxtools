@@ -114,4 +114,10 @@ public class CGArc extends AbstractTreeElement {
         }
     }
 
+	@Override
+	public String getAddr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
