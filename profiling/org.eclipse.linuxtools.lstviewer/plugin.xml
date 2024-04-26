@@ -5,7 +5,7 @@
 	<extension point="org.eclipse.ui.views">
 		<view
 			id="org.eclipse.linuxtools.lstviewer.CustomTextView"
-			name="Text View"
+			name="LST View"
 			icon="icons/text.png"
 			class="org.eclipse.linuxtools.lstviewer.CustomTextView"
 			category="org.eclipse.linuxtools.profiling.ui">

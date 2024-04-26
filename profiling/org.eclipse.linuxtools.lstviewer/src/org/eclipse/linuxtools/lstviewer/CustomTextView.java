@@ -8,6 +8,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -16,47 +24,38 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.window.Window;
+import org.eclipse.linuxtools.lstviewer.actions.AddressBarContributionItem;
+import org.eclipse.linuxtools.lstviewer.actions.OpenTextAction;
+import org.eclipse.linuxtools.lstviewer.actions.SearchAddrAction;
+import org.eclipse.linuxtools.lstviewer.actions.SearchTextAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.linuxtools.lstviewer.actions.AddressBarContributionItem;
-import org.eclipse.linuxtools.lstviewer.actions.OpenTextAction;
-import org.eclipse.linuxtools.lstviewer.actions.SearchAddrAction;
-import org.eclipse.linuxtools.lstviewer.actions.SearchTextAction;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.swt.events.MouseEvent;  
-import org.eclipse.swt.events.MouseListener;  
-import org.eclipse.swt.dnd.Clipboard;  
-import org.eclipse.swt.dnd.TextTransfer;  
-import org.eclipse.swt.dnd.Transfer;  
-import org.eclipse.swt.widgets.Display;  
-import org.eclipse.swt.widgets.Menu;  
-import org.eclipse.jface.action.Separator;  
-import org.eclipse.swt.widgets.Control;  
+import org.eclipse.ui.part.ViewPart;  
   
 public class CustomTextView extends ViewPart {
   
@@ -122,14 +121,7 @@ public class CustomTextView extends ViewPart {
         fillLocalToolBar(toolbarmanager);
         
         MenuManager menuManager = new MenuManager("#PopupMenu");  
-        menuManager.setRemoveAllWhenShown(true);  
-        menuManager.addMenuListener(new IMenuListener() {  
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				// TODO Auto-generated method stub
-				fillContextMenu(manager);
-			}  
-        }); 
+
 
         contextMenu = menuManager.createContextMenu(styledText);  
         contextMenu.setVisible(true);

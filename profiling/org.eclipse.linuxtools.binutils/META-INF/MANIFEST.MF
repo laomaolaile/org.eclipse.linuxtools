@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.workbench.texteditor,
- org.eclipse.linuxtools.tools.launch.core
+ org.eclipse.linuxtools.tools.launch.core;bundle-version="3.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.linuxtools.binutils.link2source,
  org.eclipse.linuxtools.binutils.utils

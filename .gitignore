@@ -3,3 +3,5 @@ bin/
 **/screenshots
 *.pxm
 lib
+.classpath
+*.xml
