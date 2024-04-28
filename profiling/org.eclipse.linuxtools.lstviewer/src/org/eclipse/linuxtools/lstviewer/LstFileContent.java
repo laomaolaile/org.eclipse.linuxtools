@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 
 public class LstFileContent {
@@ -15,7 +16,7 @@ public class LstFileContent {
 	
 	private LstObject lst = new LstObject();
 	
-	private String regex = "([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}):(\\s|\\t)+([0-9A-Fa-f]{4}|[0-9A-Fa-f]{8})(\\s|\\t)+";
+	private String regex = "([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}):(\\s|\\t)+(([0-9A-Fa-f]{4})|([0-9A-Fa-f]{8})|(([0-9A-Fa-f]{2}\\s){3}[0-9A-Fa-f]{2}))(\\s|\\t)+";
 	
 	private String instraregex = "<.*?>";
 	
@@ -35,7 +36,6 @@ public class LstFileContent {
 	            String line; 
 	            int l = 0;
 	            while ((line = reader.readLine()) != null) {
-	            	
 	                if (line != null) { 
 	                	Matcher matcher = pattern.matcher(line);
 	                	while (matcher.find()) {

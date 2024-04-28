@@ -69,12 +69,12 @@ public final class STAddr2Assembly {
 		IFile f = getFileForPath(sourceLoc, project);
         if (f != null && f.exists()) {
 			IViewPart viewEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.findView("org.riscvstudio.ide.tools.riscv.texteditor.CustomTextView"); //$NON-NLS-1$
+					.findView("org.eclipse.linuxtools.lstviewer.CustomTextView"); //$NON-NLS-1$
 
 			if (viewEditor == null) {
 				try {
 					viewEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.showView("org.riscvstudio.ide.tools.riscv.texteditor.CustomTextView"); //$NON-NLS-1$
+							.showView("org.eclipse.linuxtools.lstviewer.CustomTextView"); //$NON-NLS-1$
 				} catch (PartInitException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

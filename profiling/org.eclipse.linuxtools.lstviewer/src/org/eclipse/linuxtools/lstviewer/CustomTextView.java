@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -121,10 +122,17 @@ public class CustomTextView extends ViewPart {
         fillLocalToolBar(toolbarmanager);
         
         MenuManager menuManager = new MenuManager("#PopupMenu");  
-
+        menuManager.setRemoveAllWhenShown(true);  
+        menuManager.addMenuListener(new IMenuListener() {  
+			@Override
+			public void menuAboutToShow(IMenuManager manager) {
+				// TODO Auto-generated method stub
+				fillContextMenu(manager);
+			}  
+        }); 
 
         contextMenu = menuManager.createContextMenu(styledText);  
-        contextMenu.setVisible(true);
+        contextMenu.setVisible(false);
 
         styledText.addKeyListener(new KeyAdapter() {
 			@Override  
