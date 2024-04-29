@@ -175,7 +175,7 @@ public class GmonDecoder {
         stream.readFully(_cookie);
         cookie = new String(_cookie);
         gmonVersion = stream.readInt();
-        byte[] spare = new byte[12];
+		byte[] spare = new byte[12];
         stream.readFully(spare);
         return "gmon".equals(cookie); //$NON-NLS-1$
     }

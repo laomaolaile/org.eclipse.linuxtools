@@ -207,8 +207,10 @@ public class GmonView extends AbstractSTDataView {
 				+ decoder.getLstObject().getLstpath() + "\n" //$NON-NLS-1$
                 + " timestamp: " + decoder.getGmonFileTimeStamp(); //$NON-NLS-1$
         HistogramDecoder histo = decoder.getHistogramDecoder();
+        
         if (histo.hasValues()) {
             double prof_rate = histo.getProfRate();
+            long maxcnt = histo.getCycleMaxcnt();
             String period = ""; //$NON-NLS-1$
             if (prof_rate != 0) {
                 char tUnit = histo.getTimeDimension();
@@ -222,8 +224,14 @@ public class GmonView extends AbstractSTDataView {
                 case 'u':
                     prof_rate /= 1000;
                     break;
+				case 'n':
+					prof_rate /= 1;
+					break;
                 }
-                period = ", each sample counts as " + SampleProfField.getValue(1, prof_rate); //$NON-NLS-1$
+                
+				String transform = maxcnt > 0 ? SampleProfField.getValue(1, prof_rate, maxcnt)
+						: SampleProfField.getValue(1, prof_rate);
+				period = ", each sample counts as " + transform; //$NON-NLS-1$
             }
             title += "\n " + histo.getBucketSize() //$NON-NLS-1$
                     + " bytes per bucket" + period; //$NON-NLS-1$

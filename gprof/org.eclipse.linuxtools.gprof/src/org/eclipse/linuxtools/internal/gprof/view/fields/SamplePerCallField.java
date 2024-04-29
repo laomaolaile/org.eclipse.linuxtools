@@ -75,8 +75,14 @@ public class SamplePerCallField extends SampleProfField {
         float k = (float)i/(float)j;
 
         double prof_rate = getProfRate();
+        
         if(prof_rate != 0){
-            return getValue(k, prof_rate);
+        	if(getCycleMaxcnt() > 0) {
+        		return getValue(k, prof_rate,getCycleMaxcnt());
+        	}else {
+        		return getValue(k, prof_rate);
+        	}
+            
         }else {
             return ""; //$NON-NLS-1$
         }

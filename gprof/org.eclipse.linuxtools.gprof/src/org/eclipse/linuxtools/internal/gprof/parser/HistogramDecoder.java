@@ -37,6 +37,8 @@ public class HistogramDecoder {
     private static final int GMON_HDRSIZE_OLDBSD_32 = (4 + 4 + 4) ;
     private static final int GMON_HDRSIZE_OLDBSD_64 = (8 + 8 + 4);
 
+	private static final String GMON_CYCLE_SPARSE_0 = "0x1234"; //$NON-NLS-1$
+
 
     /** the decoder */
     protected final GmonDecoder decoder;
@@ -60,6 +62,10 @@ public class HistogramDecoder {
     protected double total_time;
 
     protected long bucketSize;
+
+	protected String spare0;
+
+	protected long maxcnt;
 
 
     /**
@@ -120,7 +126,8 @@ public class HistogramDecoder {
         if (version == GmonDecoder.GMONVERSION)
         {
             profrate = stream.readInt();
-            stream.skipBytes(GMON_HDRSIZE_BSD44);
+			spare0 = "0x" + Integer.toHexString(stream.readInt()); //$NON-NLS-1$
+			maxcnt = (stream.readInt() & 0xFFFFFFFFL) | ((long) stream.readInt() << 32);
             if (decoder._32_bit_platform) {
               headerSize = GMON_HDRSIZE_BSD44_32;
             } else {
@@ -149,9 +156,11 @@ public class HistogramDecoder {
         this.highpc    = highPC;
         this.profRate = profrate;
         hist_sample    = new int[histNumBins]; // Impl note: JVM sets all integers to 0
-        dimenAbbrev   = 's';
+		dimenAbbrev = 's';
         long temp = highpc - lowpc;
         bucketSize = Math.round(temp/(double)histNumBins);
+
+
     }
 
 
@@ -291,6 +300,15 @@ public class HistogramDecoder {
     public int getProfRate() {
         return profRate;
     }
+
+	/**
+	 * @return the profRate
+	 */
+	public long getCycleMaxcnt() {
+		if (spare0.equals(GMON_CYCLE_SPARSE_0))
+			return maxcnt;
+		return 0;
+	}
 
     /**
      *

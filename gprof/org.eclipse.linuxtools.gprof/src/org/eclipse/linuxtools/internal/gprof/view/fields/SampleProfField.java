@@ -83,7 +83,13 @@ public class SampleProfField extends AbstractSTDataViewersField implements IChar
             if (prof_rate == UNINITIALIZED) {
                 return "?"; //$NON-NLS-1$
             }
-            return getValue(i, prof_rate);
+            
+			if (getCycleMaxcnt() > 0) {
+				return getValue(i, prof_rate, getCycleMaxcnt());
+            }else {
+            	return getValue(i, prof_rate);
+            }
+            
         }
     }
 
@@ -142,6 +148,87 @@ public class SampleProfField extends AbstractSTDataViewersField implements IChar
         return timeInHour + "h " + min + "min"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+	/**
+	 * Get the time value with the best unit display
+	 * 
+	 * @param i        nbr of samples
+	 * @param profRate profiling frequency
+	 * @return time value with the best adapted time unit
+	 */
+	public static String getValue(double i, double profRate, long maxcnt) {
+
+		long relation = maxcnt > 65535 ? maxcnt / 65535 : 1;
+
+		long timeInNs = (long) (i / profRate);
+		long ns = timeInNs % 1000;
+
+		ns = (long) (ns * 0.001 * relation);
+
+		long timeInUs = timeInNs / 1000;
+		if (timeInUs == 0) {
+			return ns + " cycle"; //$NON-NLS-1$
+		}
+		long us = timeInUs % 1000;
+		
+		us = us * relation;
+
+		long timeInMs = timeInUs / 1000;
+		if (timeInMs == 0) {
+			String ns_s = "" + ns; //$NON-NLS-1$
+			while (ns_s.length() < 3) {
+				ns_s = "0" + ns_s; //$NON-NLS-1$
+			}
+			return (us + Long.parseLong(ns_s)) + " cycle"; //$NON-NLS-1$
+		}
+		long ms = timeInMs % 1000;
+
+		ms = ms * 1000 * relation;
+
+		long timeInS = timeInMs / 1000;
+		if (timeInS == 0) {
+			String us_s = "" + us; //$NON-NLS-1$
+			while (us_s.length() < 3) {
+				us_s = "0" + us_s; //$NON-NLS-1$
+			}
+			return (ms + Long.parseLong(us_s)) + " cycle"; //$NON-NLS-1$
+		}
+		long s = timeInS % 60;
+
+		s = s * 1000 * 1000 * relation;
+
+		long timeInMin = timeInS / 60;
+		if (timeInMin == 0) {
+			String ms_s = "" + ms; //$NON-NLS-1$
+			while (ms_s.length() < 3) {
+				ms_s = "0" + ms_s; //$NON-NLS-1$
+			}
+			return (s + Long.parseLong(ms_s)) + " cycle"; //$NON-NLS-1$
+		}
+		long min = timeInMin % 60;
+
+		min = min * 60 * 1000 * 1000 * relation;
+
+		long timeInHour = timeInMin / 60;
+		if (timeInHour == 0) {
+			return (min + s) + " cycle"; //$NON-NLS-1$
+		}
+
+		timeInHour = timeInHour * 60 * 60 * 1000 * 1000 * relation;
+
+		return (timeInHour + min) + " cycle"; //$NON-NLS-1$
+	}
+
+	protected long getCycleMaxcnt() {
+
+		long maxcnt = 0;
+		Object o = viewer.getViewer().getInput();
+		if (o instanceof GmonDecoder decoder) {
+			HistogramDecoder histo = decoder.getHistogramDecoder();
+			maxcnt = histo.getCycleMaxcnt();
+		}
+		return maxcnt;
+	}
+
 
     protected double getProfRate() {
         double prof_rate = UNINITIALIZED;
@@ -154,6 +241,9 @@ public class SampleProfField extends AbstractSTDataViewersField implements IChar
             case 's': prof_rate /= 1000000000; break;
             case 'm': prof_rate /= 1000000; break;
             case 'u': prof_rate /= 1000; break;
+			case 'n':
+				prof_rate /= 1;
+				break;
             }
         }
         return prof_rate;
