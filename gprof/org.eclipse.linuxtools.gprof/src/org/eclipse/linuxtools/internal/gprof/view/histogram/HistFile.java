@@ -96,7 +96,10 @@ public class HistFile extends AbstractTreeElement {
 
 	@Override
 	public String getAddr() {
-		return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+		if (bucket != null && bucket.startAddr > 0) {
+			return Long.toHexString(bucket.startAddr); // $NON-NLS-1$
+		}
+		return null;
 	}
 
     @Override

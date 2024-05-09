@@ -61,7 +61,7 @@ public class SampleProfField extends AbstractSTDataViewersField implements IChar
         if (samples) {
             return Messages.SampleProfField_SAMPLE_HDR;
         }
-        return Messages.SampleProfField_TIME_HDR;
+		return getCycleMaxcnt() > 0 ? Messages.SampleProfField_CYCLE_HDR : Messages.SampleProfField_TIME_HDR;
     }
 
     @Override

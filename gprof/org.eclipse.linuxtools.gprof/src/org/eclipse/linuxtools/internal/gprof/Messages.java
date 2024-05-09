@@ -35,6 +35,7 @@ public class Messages extends NLS {
     public static String SamplePerCallField_TIME_CALL_TOOLTIP;
     public static String SampleProfField_SAMPLE_HDR;
     public static String SampleProfField_TIME_HDR;
+	public static String SampleProfField_CYCLE_HDR;
     public static String SampleProfField_TIME_SPENT_AT_LOCATION;
     public static String SampleProfField_TIME_SPENT_IN_FILE;
     public static String SampleProfField_TIME_SPENT_IN_FUNCTION;
