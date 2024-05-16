@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 public class StapGraphParser extends SystemTapParser {
 
     public Map<Integer, Long> timeMap;
+    public Map<Integer, Integer> timesCalled;
     public Map<Integer, String> serialMap;
     public Map<Integer, HashMap<Integer, ArrayList<Integer>>> neighbourMaps;
     public Map<String, Long> aggregateTimeMap;
@@ -71,6 +72,7 @@ public class StapGraphParser extends SystemTapParser {
         //INITIALIZE MAPS
         neighbourMaps = new HashMap<>();
         timeMap = new HashMap<>();
+        timesCalled = new HashMap<>();
         serialMap = new TreeMap<>();
         aggregateTimeMap = new HashMap<>();
         countMap = new HashMap<>();
@@ -90,6 +92,7 @@ public class StapGraphParser extends SystemTapParser {
         //Clear maps (in case a previous execution left values hanging)
         neighbourMaps.clear();
         timeMap.clear();
+        timesCalled.clear();
         serialMap.clear();
         aggregateTimeMap.clear();
         countMap.clear();
@@ -216,6 +219,7 @@ public class StapGraphParser extends SystemTapParser {
                 int id = Integer.parseInt(args[1]);
                 long time = Long.parseLong(args[2]);
                 int tid = Integer.parseInt(args[3]);
+                int calltime = args.length > 4 ? Integer.parseInt(args[4]):1;
                 String name = args[0];
 
                 //If we haven't encountered a main function yet and the name isn't clean,
@@ -255,6 +259,7 @@ public class StapGraphParser extends SystemTapParser {
 
                 serialMap.put(id, name);
                 timeMap.put(id, time);
+                timesCalled.put(id, calltime);
 
                 if (aggregateTimeMap.get(name) == null){
                     aggregateTimeMap.put(name, (long) 0);

@@ -41,6 +41,7 @@ import org.eclipse.linuxtools.internal.gprof.action.SwitchContentProviderAction;
 import org.eclipse.linuxtools.internal.gprof.action.SwitchSampleTimeAction;
 import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
 import org.eclipse.linuxtools.internal.gprof.parser.HistogramDecoder;
+import org.eclipse.linuxtools.internal.gprof.utils.GprofCallGraph;
 import org.eclipse.linuxtools.internal.gprof.utils.PPC64ElfBinaryObjectWrapper;
 import org.eclipse.linuxtools.internal.gprof.view.fields.SampleProfField;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.CGArc;
@@ -291,6 +292,13 @@ public class GmonView extends AbstractSTDataView {
 			IStatus status = Status.error(e.getMessage(), e);
             Activator.getDefault().getLog().log(status);
         }
+
+		try {
+			GprofCallGraph.makeData(decoder);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return displayGprofView(decoder, gmonPath);
     }
 

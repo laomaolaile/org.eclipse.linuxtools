@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.zest.core.widgets.GraphItem;
-import org.eclipse.zest.core.widgets.GraphNode;
 
 public class StapGraphMouseListener implements MouseListener {
     private StapGraph graph;

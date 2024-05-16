@@ -198,7 +198,7 @@ public class CallgraphView extends SystemTapView {
                     msg = parser.markedMap.remove(id_parent);
                 }
                 g.loadData(SWT.NONE, id_parent, parser.serialMap.get(id_parent), parser.timeMap.get(id_parent),
-                        1, 0, marked, msg);
+                		parser.timesCalled.get(id_parent), 0, marked, msg);
             }
 
             for (int key :parser.neighbourMaps.keySet()) {
@@ -229,11 +229,11 @@ public class CallgraphView extends SystemTapView {
                         if (parser.timeMap.get(id_child) == null){
                             g.loadData(SWT.NONE, id_child, parser.serialMap
                                     .get(id_child), parser.timeMap.get(0),
-                                    1, id_parent, marked,msg);
+                                    parser.timesCalled.get(id_child), id_parent, marked,msg);
                         }else{
                             g.loadData(SWT.NONE, id_child, parser.serialMap
                                     .get(id_child), parser.timeMap.get(id_child),
-                                    1, id_parent, marked,msg);
+                                    parser.timesCalled.get(id_child), id_parent, marked,msg);
                         }
                     }
                 }

@@ -40,8 +40,8 @@ public class CGArc extends AbstractTreeElement {
         this.arc = arc;
     }
 
-    @Override
-    public LinkedList<? extends TreeElement> getChildren() {
+	@Override
+	public LinkedList<? extends TreeElement> getChildren() {
         return null;
     }
 
