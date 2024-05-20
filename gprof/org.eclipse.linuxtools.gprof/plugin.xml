@@ -6,10 +6,19 @@
       <editor
             default="true"
             extensions="bundle"
-            filenames="gmon.out, gmon.sum, *.out"
+            filenames="gmon.out, gmon.sum"
             icon="icons/toggle.gif"
             id="org.eclipse.linuxtools.gprof.editor.single"
             launcher="org.eclipse.linuxtools.internal.gprof.action.OpenGmonAction"
+            name="%gprofEditor">
+      </editor>
+      <editor
+            default="true"
+            extensions="bundle"
+            filenames="callgraph.out"
+            icon="icons/genericregister_obj.gif"
+            id="org.eclipse.linuxtools.gprof.editor.callgraph"
+            launcher="org.eclipse.linuxtools.internal.gprof.action.OpenCallGraphAction"
             name="%gprofEditor">
       </editor>
    </extension>

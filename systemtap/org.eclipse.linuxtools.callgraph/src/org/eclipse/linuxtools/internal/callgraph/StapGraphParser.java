@@ -563,6 +563,13 @@ public class StapGraphParser extends SystemTapParser {
             e.printStackTrace();
         }
 
+        try {
+			buff.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
         return Status.OK_STATUS;
     }
 

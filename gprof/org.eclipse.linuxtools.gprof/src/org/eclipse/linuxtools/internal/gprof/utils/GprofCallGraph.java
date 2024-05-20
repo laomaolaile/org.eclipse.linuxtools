@@ -8,8 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import org.eclipse.linuxtools.internal.callgraph.core.CallgraphCorePlugin;
-import org.eclipse.linuxtools.internal.callgraph.core.PluginConstants;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.linuxtools.internal.gprof.PluginConstants;
 import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
 import org.eclipse.linuxtools.internal.gprof.view.CallGraphContentProvider;
 import org.eclipse.linuxtools.internal.gprof.view.histogram.CGArc;
@@ -23,19 +25,17 @@ public class GprofCallGraph {
 
 	private static LinkedHashMap<String, Object> allParentNode = new LinkedHashMap<>();
 	private static LinkedHashMap<String, Object> allChildrenNode = new LinkedHashMap<>();
-
-	static TreeElement rootNode = null;
-
-	static CallGraphContentProvider cgprovider = CallGraphContentProvider.sharedInstance;
-
-	static int i = 1;
-	static int calltime = 1;
-	static File callGraphFile = null;
+	private static CallGraphContentProvider cgprovider = CallGraphContentProvider.sharedInstance;
+	private static int i = 1;
+	private static int calltime = 1;
+	private static File callGraphFile = null;
+	private static IProject project;
 
 	public static void makeData(GmonDecoder decoder) throws IOException {
 		allParentNode.clear();
 		allChildrenNode.clear();
 
+		project = decoder.getProject();
 		HistRoot root = decoder.getRootNode();
 
 		getChildren(root);
@@ -129,7 +129,7 @@ public class GprofCallGraph {
 
 	public static File mkCallGraphFile() {
 
-		String callGraphPath = PluginConstants.getDefaultIOPath();
+		String callGraphPath = getDefaultIOPath();
 
 		File file = new File(callGraphPath);
 
@@ -155,6 +155,12 @@ public class GprofCallGraph {
 			e.printStackTrace();
 			// 处理异常，例如通过抛出异常或记录错误日志
 		}
+		try {
+			project.refreshLocal(IResource.DEPTH_ONE, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// 专门用于追加内容到文件的方法
@@ -163,6 +169,7 @@ public class GprofCallGraph {
 			writer.write(content);
 			writer.newLine(); // 如果需要换行，可以调用newLine()方法
 			writer.flush(); // 刷新缓冲区以确保内容被写入
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			// 处理异常，例如通过抛出异常或记录错误日志
@@ -179,8 +186,6 @@ public class GprofCallGraph {
 		nodeName = nodeinfo.getNodeName();
 		calls = nodeinfo.getNodeCall();
 		samples = nodeinfo.getSamples();
-
-		System.out.println("nodeName==" + nodeName + ",calls==" + calls + ",samples==" + samples);
 
 		calls = calls == 0 ? 1 : calls;
 
@@ -293,7 +298,7 @@ public class GprofCallGraph {
 	}
 
 	public static String getDefaultIOPath() {
-		return CallgraphCorePlugin.getDefault().getStateLocation().toString() + "/callgraph.out"; //$NON-NLS-1$
+		return PluginConstants.getDefaultIOPath(project); // $NON-NLS-1$
 
 	}
 

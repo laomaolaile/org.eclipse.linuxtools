@@ -88,6 +88,8 @@ public class CallgraphView extends SystemTapView {
     private Composite graphComp;
     private Composite treeComp;
 
+    private Label label ;
+
     private StapGraph g;
     private static final int TREE_SIZE = 200;
 
@@ -242,6 +244,8 @@ public class CallgraphView extends SystemTapView {
             if (parser.neighbourMaps.size() > 1) {
                 g.setThreaded();
             }
+
+
         }
 
         monitor.worked(1);
@@ -275,6 +279,12 @@ public class CallgraphView extends SystemTapView {
         setGraphOptions(true);
         g.initializeTree();
         g.setProject(parser.project);
+
+
+        if(parser.getFile() != null) {
+        	String title = "This call graph file is in : "; //$NON-NLS-1$
+        	label.setText(title+parser.getFile());
+        }
 
 
         return Status.OK_STATUS;
@@ -552,6 +562,11 @@ public class CallgraphView extends SystemTapView {
         animation.add(animationFast);
 
         setGraphOptions(false);
+
+        label = new Label(masterComposite, SWT.WRAP);
+        GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1);
+        label.setLayoutData(data);
+        label.setText("");
     }
 
 
@@ -852,10 +867,12 @@ public class CallgraphView extends SystemTapView {
                 FileDialog dialog = new FileDialog(new Shell(), SWT.DEFAULT);
                 String filePath =  dialog.open();
                 if (filePath != null){
+                	label.setText(filePath);
                     StapGraphParser new_parser = new StapGraphParser();
                     new_parser.setSourcePath(filePath);
                         new_parser.setViewID(CallGraphConstants.VIEW_ID);
                     new_parser.schedule();
+
                 }
             }
         };

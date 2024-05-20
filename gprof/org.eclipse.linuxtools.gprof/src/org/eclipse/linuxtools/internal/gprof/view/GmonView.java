@@ -37,6 +37,7 @@ import org.eclipse.linuxtools.dataviewers.actions.STExportToCSVAction;
 import org.eclipse.linuxtools.dataviewers.charts.actions.ChartAction;
 import org.eclipse.linuxtools.internal.gprof.Activator;
 import org.eclipse.linuxtools.internal.gprof.Messages;
+import org.eclipse.linuxtools.internal.gprof.action.OpenDefaultCallGraphAction;
 import org.eclipse.linuxtools.internal.gprof.action.SwitchContentProviderAction;
 import org.eclipse.linuxtools.internal.gprof.action.SwitchSampleTimeAction;
 import org.eclipse.linuxtools.internal.gprof.parser.GmonDecoder;
@@ -89,7 +90,9 @@ public class GmonView extends AbstractSTDataView {
     private Action action2;
     private Action action3;
     private Action action4;
+	private Action openDefault;
     private Action switchSampleTime;
+	private static IProject project;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -132,6 +135,7 @@ public class GmonView extends AbstractSTDataView {
         manager.add(action3);
         manager.add(action4);
         manager.add(action1);
+		manager.add(openDefault);
         manager.add(new Separator());
         manager.add(switchSampleTime);
         manager.add(new Separator());
@@ -149,6 +153,10 @@ public class GmonView extends AbstractSTDataView {
                 "Sort samples per function", "icons/function_obj.gif", getSTViewer().getViewer(), FunctionHistogramContentProvider.sharedInstance); //$NON-NLS-1$ //$NON-NLS-2$
         action4 = new SwitchContentProviderAction(
                 "Sort samples per line", "icons/line_obj.gif", getSTViewer().getViewer(), FlatHistogramContentProvider.sharedInstance); //$NON-NLS-1$ //$NON-NLS-2$
+
+		openDefault = new OpenDefaultCallGraphAction("Open call graph view", "icons/genericregister_obj.gif", //$NON-NLS-1$ //$NON-NLS-2$
+				GmonView.project);
+
         switchSampleTime = new SwitchSampleTimeAction(this);
     }
 
@@ -317,14 +325,17 @@ public class GmonView extends AbstractSTDataView {
                 id = id.replace('.', '_');
                 id = id.replace(':', '_');
             }
+			project = decoder.getProject();
             gmonview = (GmonView) page.showView(ID, id,
                     IWorkbenchPage.VIEW_ACTIVATE);
             if (decoder.getHistogramDecoder().getProfRate() == 0) {
                 gmonview.switchSampleTime.setToolTipText("Unable to display time, because profiling rate is null"); //$NON-NLS-1$
                 gmonview.switchSampleTime.setEnabled(false);
             }
-            gmonview.setInput(decoder);
+
+			gmonview.setInput(decoder);
             GmonView.setHistTitle(decoder, gmonview.label);
+			gmonview.createActions();
             if (!decoder.getHistogramDecoder().hasValues()) {
                 gmonview.action1.setChecked(true);
                 gmonview.action2.setChecked(false);
@@ -336,7 +347,12 @@ public class GmonView extends AbstractSTDataView {
         return gmonview;
     }
 
-    @Override
+	private void setProject(IProject project) {
+		// TODO Auto-generated method stub
+		this.project = project;
+	}
+
+	@Override
     protected IAction createExportToCSVAction() {
 		return new STExportToCSVAction(this.getSTViewer()) {
             @Override

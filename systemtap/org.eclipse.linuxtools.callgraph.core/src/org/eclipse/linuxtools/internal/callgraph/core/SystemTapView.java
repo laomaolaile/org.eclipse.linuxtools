@@ -327,4 +327,8 @@ public abstract class SystemTapView extends ViewPart {
         sourcePath = file;
     }
 
+	public String getSourcePath() {
+		return sourcePath;
+	}
+
 }
