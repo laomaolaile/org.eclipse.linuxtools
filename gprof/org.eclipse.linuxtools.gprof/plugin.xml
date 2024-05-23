@@ -6,7 +6,7 @@
       <editor
             default="true"
             extensions="bundle"
-            filenames="gmon.out, gmon.sum"
+            filenames="gmon.out, gmon.sum, *.gmon"
             icon="icons/toggle.gif"
             id="org.eclipse.linuxtools.gprof.editor.single"
             launcher="org.eclipse.linuxtools.internal.gprof.action.OpenGmonAction"

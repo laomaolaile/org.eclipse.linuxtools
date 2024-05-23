@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -31,9 +32,12 @@ public class GprofCallGraph {
 	private static File callGraphFile = null;
 	private static IProject project;
 
+	private static HashMap<String, Integer> prin = new HashMap<>();
+
 	public static void makeData(GmonDecoder decoder) throws IOException {
 		allParentNode.clear();
 		allChildrenNode.clear();
+		prin.clear();
 
 		project = decoder.getProject();
 		HistRoot root = decoder.getRootNode();
@@ -232,6 +236,8 @@ public class GprofCallGraph {
 
 		nodeName = nodeinfo.getNodeName();
 
+		System.out.println("nodeName" + nodeName);
+
 		String key = null;
 
 		if (cgchildrens != null && cgchildrens.length > 0) {
@@ -241,6 +247,7 @@ public class GprofCallGraph {
 				GprofCallGraphNode snodeinfo = getNodeInfo(children);
 
 				key = snodeinfo.getNodeName();
+				int call = snodeinfo.getNodeCall();
 
 				if (key != null && !key.equals("parents")) { //$NON-NLS-1$
 					if (key.equals("children")) { //$NON-NLS-1$
@@ -250,14 +257,23 @@ public class GprofCallGraph {
 							String ckey = null;
 							GprofCallGraphNode ssnodeinfo = getNodeInfo(clild);
 							ckey = ssnodeinfo.getNodeName();
-							if (ckey != null && ckey.equals(nodeName)) {
-								prantData(clild, true);
-							} else {
-								prantData(clild, false);
+							int scall = ssnodeinfo.getNodeCall();
+
+							String prin_key = nodeName+ckey+scall;
+							if (!prin.containsKey(prin_key)) {
+								if (ckey != null && ckey.equals(nodeName)) {
+									prantData(clild, true);
+								} else {
+									prin.put(prin_key, 1);
+									prantData(clild, false);
+								}
 							}
 						}
 					} else {
-						prantData(children, false);
+						String prin_key = nodeName+key+call;
+						if (!prin.containsKey(prin_key)) {
+							prantData(children, false);
+						}
 					}
 				}
 
