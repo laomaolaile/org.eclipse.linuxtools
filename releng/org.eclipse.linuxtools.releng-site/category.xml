@@ -64,16 +64,6 @@
    <feature url="features/org.eclipse.linuxtools.perf.remote_0.0.0.qualifier.jar" id="org.eclipse.linuxtools.perf.remote.feature" version="0.0.0">
       <category name="Linux Tools"/>
    </feature>
-   <!-- Orbit Dependencies -->
-   <iu id="org.eclipse.swtchart" version="0.0.0">
-      <category name="Linux Tools"/>
-   </iu>
-   <iu id="org.eclipse.swtchart.extensions" version="0.0.0">
-      <category name="Linux Tools"/>
-   </iu>
-   <iu id="org.codelibs.nekohtml" version="0.0.0">
-      <category name="Linux Tools"/>
-   </iu>
    <feature url="features/org.eclipse.linuxtools.cdt.libhover.feature.source_0.0.0.qualifier.jar" id="org.eclipse.linuxtools.cdt.libhover.feature.source" version="0.0.0">
       <category name="Linux Tools Sources"/>
    </feature>
@@ -133,6 +123,9 @@
    </feature>
    <feature url="features/org.eclipse.linuxtools.javadocs.feature.source_0.0.0.qualifier.jar" id="org.eclipse.linuxtools.javadocs.feature.source" version="0.0.0">
       <category name="Linux Tools Sources"/>
+   </feature>
+   <feature id="org.eclipse.linuxtools.lstviewer.feature">
+      <category name="Linux Tools"/>
    </feature>
    <category-def name="Linux Tools" label="Linux Tools">
       <description>

@@ -40,6 +40,8 @@
   </licenses>
 
   <modules>
+    <module>org.eclipse.linuxtools.lstviewer</module>
+    <module>org.eclipse.linuxtools.lstviewer-feature</module>
     <module>org.eclipse.linuxtools.tools.launch.core</module>
     <module>org.eclipse.linuxtools.tools.launch.core.tests</module>
     <module>org.eclipse.linuxtools.tools.launch.ui</module>
@@ -61,7 +63,6 @@
     <module>org.eclipse.linuxtools.rdt.proxy.tests</module>
     <module>org.eclipse.linuxtools.ssh.proxy</module>
     <module>org.eclipse.linuxtools.remote.proxy.tests</module>
-    <module>org.eclipse.linuxtools.lstviewer</module>
   </modules>
 
 </project>
