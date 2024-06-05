@@ -11,18 +11,27 @@
 			category="org.eclipse.linuxtools.profiling.ui">
 		</view>
 	</extension>
-
-	<extension
-		point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension
-			targetID="org.eclipse.cdt.ui.CPerspective">
-			<view
-				relative="org.eclipse.ui.views.ContentOutline"
-				visible="true"
-				relationship="stack"
-				id="org.eclipse.linuxtools.lstviewer.CustomTextView">
-			</view>
-		</perspectiveExtension>
+	
+	<extension  
+	    point="org.eclipse.ui.perspectiveExtensions">  
+	    <perspectiveExtension  
+	        targetID="org.eclipse.debug.ui.DebugPerspective">  
+	        <view  
+	            relative="org.eclipse.debug.ui.VariableView"  
+	            visible="true"  
+	            relationship="stack"  
+	            id="org.eclipse.linuxtools.lstviewer.CustomTextView">  
+	        </view>  
+	    </perspectiveExtension>  
+	    <perspectiveExtension  
+	        targetID="*">
+	        <view  
+	            relative="org.eclipse.ui.views.ContentOutline"  
+	            visible="true"  
+	            relationship="stack"  
+	            id="org.eclipse.linuxtools.lstviewer.CustomTextView">  
+	        </view>  
+	    </perspectiveExtension>  
 	</extension>
 
 </plugin>
