@@ -179,7 +179,7 @@ public class LinuxtoolsPathPropertyPage extends PropertyPage {
             linuxtoolsPath.setEnabled(false, result);
             linuxtoolsPathCombo.setEnabled(false, result);
         } else {
-            linuxtoolsPath.setEnabled(customSelected, result);
+            linuxtoolsPath.setEnabled(true, result);
             linuxtoolsPathCombo.setEnabled(true, result);
         }
     }
