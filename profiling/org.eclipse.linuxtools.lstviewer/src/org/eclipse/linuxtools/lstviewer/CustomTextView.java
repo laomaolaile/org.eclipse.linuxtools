@@ -91,6 +91,8 @@ public class CustomTextView extends ViewPart {
     Color highlightBGColor = new Color(new RGB(0,120,215));  
     Color highlightFontColor = new Color(new RGB(255, 255, 255)); 
     
+    private boolean showMenuManager = false;
+    
   
 
 	@Override
@@ -127,7 +129,7 @@ public class CustomTextView extends ViewPart {
 			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				// TODO Auto-generated method stub
-				fillContextMenu(manager);
+				if(showMenuManager) fillContextMenu(manager);
 			}  
         }); 
 
@@ -155,6 +157,8 @@ public class CustomTextView extends ViewPart {
                    activateMyView();
                    contextMenu.setVisible(true);  
                    contextMenu.setLocation(e.x, e.y);  
+                   
+                   showMenuManager = false;
                 }  
             }  
   
@@ -163,6 +167,7 @@ public class CustomTextView extends ViewPart {
             	if (e.button == 3) {
             		Point point = new Point(e.x, e.y);
             		controlMenuShown(contextMenu, styledText, point); 
+            		showMenuManager = true;
                 } 
             }  
   
