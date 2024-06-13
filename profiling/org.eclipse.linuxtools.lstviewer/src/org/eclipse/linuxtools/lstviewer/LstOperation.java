@@ -43,11 +43,14 @@ public class LstOperation {
         if (filePath != null && !filePath.isEmpty()) {
             try {
                 IFile file = Common.findFileFromPath(filePath);
-                IMarker marker = file.createMarker(IMarker.TEXT);
-                marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                IDE.openEditor(page, marker);
-                marker.delete();
+                
+                if(file != null) {
+                	IMarker marker = file.createMarker(IMarker.TEXT);
+                    marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    IDE.openEditor(page, marker);
+                    marker.delete();
+                }
             } catch (CoreException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

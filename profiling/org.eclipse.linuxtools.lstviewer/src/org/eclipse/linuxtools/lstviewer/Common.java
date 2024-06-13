@@ -19,7 +19,7 @@ public class Common {
     {
 		Path file = new Path(textfile);
 		// can't use a null or empty path below
-    	if (file == null || file.isEmpty()) {
+    	if (file == null || file.isEmpty() || textfile.equals("??")) {
     		return null;
     	}
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

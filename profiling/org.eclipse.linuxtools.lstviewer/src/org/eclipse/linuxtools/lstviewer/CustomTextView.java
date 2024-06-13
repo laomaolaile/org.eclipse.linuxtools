@@ -77,8 +77,8 @@ public class CustomTextView extends ViewPart {
     
     private Menu contextMenu;  
 
-    private String isAddrregex = "[0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}"; 
-    private String isLstRecordregex = "([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}):(\\s|\\t)+";
+    private String isAddrregex = "(0x|0X|)?[0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}"; 
+    private String isLstRecordregex = "((0x|0X|)?[0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}):(\\s|\\t)+";
     
     
     
@@ -447,12 +447,20 @@ public class CustomTextView extends ViewPart {
 			Matcher matcher2 = pattern2.matcher(keyworld);
 					
 	        if (matcher.matches()) {
+	        	
+	        	if (keyworld != null && (keyworld.startsWith("0x") || keyworld.startsWith("0X"))) {
+	        		keyworld = keyworld.substring(2);
+	            }
 	        	addr = Long.parseLong(keyworld, 16);
         	}else if (matcher2.find()) {  
         	    String hexNumber = matcher2.group(1); 
+        	    if (hexNumber != null && (hexNumber.startsWith("0x") || hexNumber.startsWith("0X"))) {
+        	    	hexNumber = hexNumber.substring(2);
+	            }
         	    addr = Long.parseLong(hexNumber, 16);
         	}
         }
+		
 		
 		if(addr > 0) {
 			LstOperation.openSourceCode(this.openFilePath , addr);
