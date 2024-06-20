@@ -1,5 +1,6 @@
 package org.eclipse.linuxtools.lstviewer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -68,6 +69,8 @@ public class CustomTextView extends ViewPart {
 	private LstObject lstobject;
 	
 	private IFile openFilePath;
+	
+	private long lastModifiedTime;
 	
     private IAction openAction;  
     private IAction searchAction; 
@@ -248,15 +251,14 @@ public class CustomTextView extends ViewPart {
             }
         }  
     }  
-	public void clearFilePath(IFile filePath) {
-		if(styledText.getCharCount() > 0 && this.openFilePath != null && (this.openFilePath ==filePath || this.openFilePath.getFullPath().equals(filePath.getFullPath()))) {
-			this.openFilePath = null;
-		}
-		
-	}
+
 	public LstObject openFile(IFile filePath) {
 		
-		if(styledText.getCharCount() > 0 && this.openFilePath != null && (this.openFilePath ==filePath || this.openFilePath.getFullPath().equals(filePath.getFullPath()))) {
+		String strfile = filePath.getRawLocation().toString();
+		File file = new File(strfile); 
+        long lastModifiedTime = file.lastModified();  
+
+		if(styledText.getCharCount() > 0 && this.openFilePath != null && (this.openFilePath ==filePath || this.openFilePath.getFullPath().equals(filePath.getFullPath())) && lastModifiedTime == this.lastModifiedTime) {
 			return this.lstobject;
 		}
 		
@@ -264,6 +266,7 @@ public class CustomTextView extends ViewPart {
 		LstFileContent lst = new LstFileContent();
 		if (filePath != null && this.openFilePath !=filePath) {
 			this.openFilePath = filePath;
+			this.lastModifiedTime = lastModifiedTime;
 			try (InputStream contentStream = filePath.getContents()) {
 				byte[] contentBytes = contentStream.readAllBytes();
 				String content = new String(contentBytes);
@@ -350,6 +353,31 @@ public class CustomTextView extends ViewPart {
 	        if (matcher.matches()) {
 	        	Map<Long, Lst> lspmap =this.lstobject.getLstMap();
 	        	long addr = Long.parseLong(searchString, 16);
+	        	
+	        	if (!lspmap.containsKey(addr)) {
+	        		long saddr = addr - 2;
+		        	long naddr = addr + 2;
+		        	while (saddr < naddr) {
+		        		if (lspmap.containsKey(saddr)) {
+		        			addr = saddr;
+		        			break;
+	        			}  
+		        		saddr = saddr+2; 
+		            }
+	        	}
+	        	
+	        	if (!lspmap.containsKey(addr)) {
+	        		long saddr = addr - 4;
+		        	long naddr = addr + 4;
+		        	while (saddr < naddr) {
+		        		if (lspmap.containsKey(saddr)) {
+		        			addr = saddr;
+		        			break;
+	        			}  
+		        		saddr = saddr+4; 
+		            }
+	        	}
+	        	
 	        	if (lspmap.containsKey(addr)) {
 	        		Lst lst = lspmap.get(addr);
 	        		if(lst.getLine() >=0) {
