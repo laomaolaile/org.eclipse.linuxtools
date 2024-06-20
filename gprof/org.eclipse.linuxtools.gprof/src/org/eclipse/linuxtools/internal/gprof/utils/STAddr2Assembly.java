@@ -84,6 +84,7 @@ public final class STAddr2Assembly {
 			if (viewEditor instanceof CustomTextView) {
 				customTextView = (CustomTextView) viewEditor;
 				if (customTextView != null) {
+					customTextView.clearFilePath(f);
 					LstObject lstObject = customTextView.openFile(f);
 
 					if (addr != null) {

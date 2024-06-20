@@ -33,7 +33,7 @@ public class HistBucket extends AbstractTreeElement {
      * @param b the object to display in the tree
      */
     public HistBucket(HistLine parent, Bucket b) {
-        super(parent);
+		super(parent);
 		this.bucket = b;
     }
 
@@ -63,7 +63,6 @@ public class HistBucket extends AbstractTreeElement {
 		if (lst != null) {
 			return "0x" + Long.toHexString(bucket.startAddr) + "        " + lst.getInstraction(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
 		return "0x" + Long.toHexString(bucket.startAddr); //$NON-NLS-1$
     }
 
@@ -71,5 +70,23 @@ public class HistBucket extends AbstractTreeElement {
     public int getSamples() {
         return bucket.time;
     }
+
+	@Override
+	public String getSourcePath() {
+		Lst lst = bucket.lst;
+		if (lst != null && lst.getLintname() != null) {
+			return lst.getLintname();
+		}
+		return getParent().getSourcePath();
+	}
+
+	@Override
+	public int getSourceLine() {
+		Lst lst = bucket.lst;
+		if (lst != null && lst.getLintnum() > 0) {
+			return lst.getLintnum();
+		}
+		return getParent().getSourceLine();
+	}
 
 }

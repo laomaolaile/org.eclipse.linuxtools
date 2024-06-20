@@ -77,8 +77,8 @@ public class CustomTextView extends ViewPart {
     
     private Menu contextMenu;  
 
-    private String isAddrregex = "(0x|0X|)?[0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}"; 
-    private String isLstRecordregex = "((0x|0X|)?[0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}):(\\s|\\t)+";
+    private String isAddrregex = "(0x|0X|)?[0-9A-Fa-f]{2,64}"; 
+    private String isLstRecordregex = "((0x|0X|)?[0-9A-Fa-f]{2,64}):(\\s|\\t)+";
     
     
     
@@ -248,7 +248,12 @@ public class CustomTextView extends ViewPart {
             }
         }  
     }  
-	
+	public void clearFilePath(IFile filePath) {
+		if(styledText.getCharCount() > 0 && this.openFilePath != null && (this.openFilePath ==filePath || this.openFilePath.getFullPath().equals(filePath.getFullPath()))) {
+			this.openFilePath = null;
+		}
+		
+	}
 	public LstObject openFile(IFile filePath) {
 		
 		if(styledText.getCharCount() > 0 && this.openFilePath != null && (this.openFilePath ==filePath || this.openFilePath.getFullPath().equals(filePath.getFullPath()))) {
