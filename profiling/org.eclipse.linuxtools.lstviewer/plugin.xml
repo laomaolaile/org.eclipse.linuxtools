@@ -2,6 +2,19 @@
 <?eclipse version="3.4"?>
 <plugin>
 
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            default="true"
+            extensions="bundle"
+            filenames="*.lst"
+            icon="icons/toggle.gif"
+            id="org.eclipse.linuxtools.lstviewer.OpenLstAction"
+            launcher="org.eclipse.linuxtools.lstviewer.actions.OpenLstAction"
+            name="%gprofEditor">
+      </editor>
+   </extension>
+
 	<extension point="org.eclipse.ui.views">
 		<view
 			id="org.eclipse.linuxtools.lstviewer.CustomTextView"

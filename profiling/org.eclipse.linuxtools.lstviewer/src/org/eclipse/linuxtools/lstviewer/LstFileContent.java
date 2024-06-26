@@ -110,6 +110,8 @@ public class LstFileContent {
 
 	        lst.setLstMap(lstMap);
 		}
+		
+		STSymbolManager.sharedInstance.reset();
 
 	}
 	
