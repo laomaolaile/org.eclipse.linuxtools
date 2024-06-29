@@ -292,12 +292,29 @@ public class CustomTextView extends ViewPart {
         int nextLineOffset = 0;
         String lineContent = null;
         
+        int lineNu = 0;
+        int kf = 0;
+        int nf = 0;
+        
         StyleRange styleRange = new StyleRange();  
     	
     	styleRange.background = highlightBGColor; // 设置背景色为红色  
     	styleRange.foreground = highlightFontColor;
     	
-        
+    	
+    	int offset = styledText.getCaretOffset();
+    	
+    	if(offset > 0) {
+    		try {
+            	lineNu = document.getLineOfOffset(offset) + 1;
+            	
+            	lineNu = lineNu <=5 ?0:lineNu+5;
+    		} catch (BadLocationException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}  
+    	}
+    	
         while (nextLineOffset < document.getLength()) {  
 			if (styledText != null && lineNumber >= 0 && lineNumber <= styledText.getLineCount()) {
 				lineOffset = styledText.getOffsetAtLine(lineNumber);
@@ -317,7 +334,11 @@ public class CustomTextView extends ViewPart {
 			        	styleRange.length = keyword.length(); // 样式应用的长度  
 			        	styledText.setStyleRange(styleRange);
 			        	position = position + keyword.length();
-			        	flineNumber = flineNumber>0 ? flineNumber : lineNumber;
+			        	kf = kf > 0 ? kf : lineNumber;
+			        	if(flineNumber == 0) {
+			        		flineNumber = lineNumber > lineNu ? lineNumber : 0;
+			        	}
+			        	
 			        } else {  
 			        	s = false; 
 			        }
@@ -325,6 +346,7 @@ public class CustomTextView extends ViewPart {
 			}
 			lineNumber++;
         }
+        if(kf > 0 && flineNumber == 0) flineNumber = kf;
         
         gotoLine(flineNumber);
     }   

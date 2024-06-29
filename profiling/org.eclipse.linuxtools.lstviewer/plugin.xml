@@ -8,10 +8,10 @@
             default="true"
             extensions="bundle"
             filenames="*.lst"
-            icon="icons/toggle.gif"
+            icon="icons/text.png"
             id="org.eclipse.linuxtools.lstviewer.OpenLstAction"
             launcher="org.eclipse.linuxtools.lstviewer.actions.OpenLstAction"
-            name="%gprofEditor">
+            name="LST Editor">
       </editor>
    </extension>
 
