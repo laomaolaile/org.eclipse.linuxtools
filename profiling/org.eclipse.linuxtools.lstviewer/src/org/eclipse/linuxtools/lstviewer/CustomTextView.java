@@ -7,8 +7,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -18,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -26,6 +31,8 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.window.Window;
+import org.eclipse.linuxtools.binutils.utils.STBinutilsFactoryManager;
+import org.eclipse.linuxtools.binutils.utils.STSymbolManager;
 import org.eclipse.linuxtools.lstviewer.actions.AddressBarContributionItem;
 import org.eclipse.linuxtools.lstviewer.actions.OpenTextAction;
 import org.eclipse.linuxtools.lstviewer.actions.SearchAddrAction;
@@ -276,11 +283,36 @@ public class CustomTextView extends ViewPart {
 			} catch (CoreException | IOException e) {
 				e.printStackTrace();
 			}
+			checkAddr2Line(filePath);
 		}
 		sourceViewer.setDocument(document);
 		return this.lstobject;
 	}
 	
+	public void checkAddr2Line(IFile filePath) {
+		IBinaryObject binary = null ;
+		Addr2line addr2line = null;
+		if(filePath.exists()) {
+			IProject project = filePath.getProject();
+    		if(project != null) {
+    			String binaryPath = Common.getDefaultBinary(project);
+    			if(binaryPath != null) {
+    				binary = STSymbolManager.sharedInstance.getBinaryObject(new Path(binaryPath));
+    			}
+    		}
+    		if(binary != null) {
+    			try {
+    				addr2line = STBinutilsFactoryManager.getAddr2line(binary.getCPU(), binary.getPath().toOSString(), project);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    		}
+		}
+		if(addr2line == null) {
+			MessageDialog.openWarning(this.shell, "Message", "Linux Tools Path or Prefix error, \nPlease set the correct Linux Tools Path and Prefix in the Properties of the project.");
+		}
+	}
 
 	public void highlightKeyword(String keyword) {
 		

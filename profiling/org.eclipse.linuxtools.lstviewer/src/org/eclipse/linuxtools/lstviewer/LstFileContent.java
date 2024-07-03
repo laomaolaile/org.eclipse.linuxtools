@@ -11,9 +11,11 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.linuxtools.binutils.utils.STBinutilsFactoryManager;
 import org.eclipse.linuxtools.binutils.utils.STSymbolManager;
 
 public class LstFileContent {
@@ -25,9 +27,11 @@ public class LstFileContent {
 	
 	private String instraregex = "<.*?>";
 	
-	public void readLstFile(IFile filePath) {
+	public  void readLstFile(IFile filePath) {
 		
 		IBinaryObject binary = null ;
+		
+		Addr2line addr2line = null;
 
 		if(filePath.exists()) {
 			Map<Long, Lst> lstMap = new HashMap<>();
@@ -48,6 +52,14 @@ public class LstFileContent {
     			}
     		}
     		
+    		if(binary != null) {
+    			try {
+    				addr2line = STBinutilsFactoryManager.getAddr2line(binary.getCPU(), binary.getPath().toOSString(), project);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    		}
 
 			try (BufferedReader reader = new BufferedReader(new FileReader(strfile))) {  
 	            String line; 
@@ -65,9 +77,9 @@ public class LstFileContent {
 	                		
 	                		String explain = null;
 	                		
-	                		String lintName = null;
+	                		String lineName = null;
 	                		
-	                		int lintNum = 0;
+	                		int lineNum = 0;
 	                		
 	                		if(parts.length > 1 && parts[1] != null) {
 	                			String sparts = parts[1];
@@ -80,22 +92,21 @@ public class LstFileContent {
 	                			
 	                			String[] instractions = sparts.split("#");
 	                			
-	                			if(instractions.length > 0)instraction = instractions[0].trim().replace("\t", "        ");;
+	                			if(instractions.length > 0)instraction = instractions[0].trim().replace("\t", "        ");
 	                			if(instractions.length > 1) explain = explain + "# " + instractions[1].trim().replace("\t", "        ");
 	                		}
 	                		
-	                		if(binary != null) {
+	                		if(binary != null && addr2line != null) {
 	                			IAddress parentAddress = binary.getAddressFactory().createAddress(Long.toString(addr));
 		        		        if(parentAddress != null) {
 		        		        	// TODO Auto-generated method stub
-		        					lintName = STSymbolManager.sharedInstance.getFileName(binary, parentAddress, project);
-		        			        lintNum = STSymbolManager.sharedInstance.getLineNumber(binary, parentAddress, project);
+		        					lineName = STSymbolManager.sharedInstance.getFileName(binary, parentAddress, project);
+		        			        lineNum = STSymbolManager.sharedInstance.getLineNumber(binary, parentAddress, project);
 		        			        
 		        		        }
 	                		}
 	                		
-
-	                		lstMap.put(addr, new Lst(addr, l, inscode, instraction , explain,lintName,lintNum));
+	                		lstMap.put(addr, new Lst(addr, l, inscode, instraction , explain,lineName,lineNum));
 	                	}
 	                }
 	                l++;

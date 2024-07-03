@@ -13,6 +13,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.linuxtools.lstviewer.Common;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -30,7 +31,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-import org.eclipse.linuxtools.lstviewer.Common;
 
 /**
  * This dialog box is opened when user clicks on a gmon file. it alows the user to choose the textary file who produced
@@ -220,7 +220,7 @@ public class OpenTextDialog extends Dialog {
         File f = new File(t);
         t = f.getParent();
         if (t == null || t.length() == 0) {
-            t = this.textPath.removeLastSegments(1).toOSString();
+           if(this.textPath != null) t = this.textPath.removeLastSegments(1).toOSString();
         }
         dialog.setFilterPath(t);
         String s = dialog.open();
