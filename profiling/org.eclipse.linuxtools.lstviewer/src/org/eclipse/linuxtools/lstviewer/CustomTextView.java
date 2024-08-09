@@ -303,15 +303,20 @@ public class CustomTextView extends ViewPart {
     		if(binary != null) {
     			try {
     				addr2line = STBinutilsFactoryManager.getAddr2line(binary.getCPU(), binary.getPath().toOSString(), project);
+    				
+    				
     			} catch (IOException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
     			}
     		}
+    		
+    		STSymbolManager.sharedInstance.reset();
 		}
 		if(addr2line == null) {
 			MessageDialog.openWarning(this.shell, "Message", "Linux Tools Path or Prefix error, \nPlease set the correct Linux Tools Path and Prefix in the Properties of the project.");
 		}
+		addr2line.dispose();
 	}
 
 	public void highlightKeyword(String keyword) {

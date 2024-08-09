@@ -49,6 +49,11 @@ public class LstOperation {
 			        	setAttributeByLine(project,lineName,lineNum);
 			        }
 		        }
+		        
+		        if(addr2line !=null) {
+		        	addr2line.dispose();
+		        }
+                STSymbolManager.sharedInstance.reset();
 			}
 		}
 	}

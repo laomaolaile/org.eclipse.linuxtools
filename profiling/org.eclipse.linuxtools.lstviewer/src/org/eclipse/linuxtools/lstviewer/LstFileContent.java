@@ -120,9 +120,14 @@ public class LstFileContent {
 			} 
 
 	        lst.setLstMap(lstMap);
+	        
+	        if(addr2line !=null) {
+	        	addr2line.dispose();
+	        }
+	        STSymbolManager.sharedInstance.reset();
 		}
 		
-		STSymbolManager.sharedInstance.reset();
+		
 
 	}
 	
