@@ -89,6 +89,8 @@ public final class STAddr2Assembly {
 					if (addr != null) {
 						customTextView.gotoLine(customTextView.findLineNumberForAddr(addr));
 					}
+                    
+                    customTextView.activateMyView();
 
 					return lstObject;
 				}
